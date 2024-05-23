@@ -1,9 +1,29 @@
 -- Utils --
 local Utils = {}
 
--- Services --
-local UserInputService = game:GetService("UserInputService")
-local GuiService = game:GetService("GuiService")
+function Utils.awardBadge(player : Player, badgeId : number)
+	local BadgeService = game:GetService("BadgeService")
+	
+	local success, badgeInfo = pcall(function()
+		return BadgeService:GetBadgeInfoAsync(badgeId)
+	end)
+
+	if success then
+		if badgeInfo.IsEnabled then
+			local awardSuccess, result = pcall(function()
+				return BadgeService:AwardBadge(player.UserId, badgeId)
+			end)
+
+			if not awardSuccess then
+				warn("Error while awarding badge:", result)
+			elseif not result then
+				warn("Failed to award badge.")
+			end
+		end
+	else
+		warn("Error while fetching badge info: " .. badgeInfo)
+	end
+end
 
 function Utils.isEffect(e : any)
 	return e:IsA("ParticleEmitter") or e:IsA("Fire") or e:IsA("Trail") or e:IsA("Beam") or e:IsA("Smoke") or e:IsA("Highlight")
@@ -22,7 +42,10 @@ function Utils.quadraticBezier(a, b, c, t)
 end
 
 function Utils.isMobile()
-	if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled and not UserInputService.MouseEnabled and not UserInputService.GamepadEnabled and not GuiService:IsTenFootInterface() then
+	local UIS = game:GetService("UserInputService")
+	local GuiService = game:GetService("GuiService")
+	
+	if UIS.TouchEnabled and not UIS.KeyboardEnabled and not UIS.MouseEnabled and not UIS.GamepadEnabled and not GuiService:IsTenFootInterface() then
 		return true
 	else
 		return false
@@ -77,8 +100,8 @@ function Utils.formatNumber(n : number, onlyIfHigherThan : number?)
 	return num * math.sign(n) .. names[p]
 end
 
-function Utils.Format(n : number)
-	return string.format("%02i", n)
+function Utils.Format(n : number, formatString : string)
+	return string.format(formatString, n)
 end
 
 function Utils.convertToHMS(sec : number, includeDecimals : boolean?)
@@ -89,9 +112,9 @@ function Utils.convertToHMS(sec : number, includeDecimals : boolean?)
 	mins = mins - hrs * 60
 
 	if includeDecimals then
-		return Utils.Format(hrs).. ":" .. Utils.Format(mins).. ":" .. Utils.roundNumber(sec, 2)
+		return Utils.Format(hrs, "%02i") .. ":" .. Utils.Format(mins, "%02i") .. ":" .. Utils.roundNumber(sec, 2)
 	else
-		return Utils.Format(hrs).. ":" .. Utils.Format(mins).. ":" .. Utils.Format(sec)
+		return Utils.Format(hrs, "%02i") .. ":" .. Utils.Format(mins, "%02i") .. ":" .. Utils.Format(sec, "%02i")
 	end
 end
 
