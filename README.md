@@ -5,6 +5,7 @@ A collection of utility functions for Roblox that I tend to use often.
 
 | Function | Description |
 | --- | --- |
+| .awardBadge | Awards the provided `player` with a badge, based on the provided `badgeId`, using BadgeService. |
 | .isEffect | Returns true if parameter is either a `ParticleEmitter`, `Fire`, `Trail`, `Beam`, `Smoke`, or `Highlight` |
 | .lerp | Simple lerp function, equivalent to `Vector3:Lerp()` |
 | .quadraticBezier | Function for bezier curves, mainly used for object manipulation |
