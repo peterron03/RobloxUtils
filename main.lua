@@ -63,7 +63,7 @@ function Utils.commaValue(n : number)
 	return formatted
 end
 
-function Utils.roundNumber(n : number, numberOfDecimalPlaces : number?)
+function Utils.roundNumber(n : number, numberOfDecimalPlaces : number?) : number
 	local split = string.split(string.format("%." .. (numberOfDecimalPlaces or 0) .. "f", n), ".")
 	local newSplit = string.split(split[2], "")
 
@@ -77,14 +77,18 @@ function Utils.roundNumber(n : number, numberOfDecimalPlaces : number?)
 		for _, place in pairs(newSplit) do
 			toReturn = toReturn .. place
 		end
+		
+		local toNumber = tonumber(split[1] .. "." .. toReturn)
 
-		return split[1] .. "." .. toReturn
+		return (toNumber and toNumber) or (split[1] .. "." .. toReturn)
 	else
-		return split[1]
+		local toNumber = tonumber(split[1])
+		
+		return (toNumber and toNumber) or (split[1])
 	end
 end
 
-function Utils.formatNumber(n : number, onlyIfHigherThan : number?) 
+function Utils.formatNumber(n : number, onlyIfHigherThan : number?, noCommas : boolean?) : number 
 	local names = {"K","M","B","T","q","Q","s","S","O","N","d","U","D","t"}
 	local pows = {}
 	
@@ -92,7 +96,7 @@ function Utils.formatNumber(n : number, onlyIfHigherThan : number?)
 	
 	local ab = math.abs(n)
 
-	if ab < onlyIfHigherThan then return Utils.commaValue(math.round(n)) end 
+	if ab < onlyIfHigherThan then return (noCommas and n) or (Utils.commaValue(math.round(n))) end 
 
 	local p = math.min(math.floor(math.log10(ab) / 3), #names)
 	local num = math.floor(ab / pows[p] * 100) / 100
