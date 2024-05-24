@@ -145,4 +145,30 @@ function Utils.getLastInput() : string?
 	return nil
 end
 
+function Utils.getCountryCode(player : Player) : string?
+	local LocalizationService = game:GetService("LocalizationService")
+
+	local result, code = pcall(function()
+		return LocalizationService:GetCountryRegionForPlayerAsync(player)
+	end)
+
+	if result and code then
+		return code
+	else
+		return nil
+	end
+end
+
+function Utils.getCountryEmojiFromCode(code : string) : string?
+	local Countries = script:FindFirstChild("Countries") or require(17601580421)
+	
+	if Countries then
+		local country = Countries[string.upper(code)]
+		return country and country.Emoji
+	else
+		return nil
+	end
+end
+
 return Utils
+
