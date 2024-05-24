@@ -1,7 +1,7 @@
 -- Utils --
 local Utils = {}
 
-function Utils.awardBadge(player : Player, badgeId : number)
+function Utils.awardBadge(player : Player, badgeId : number) : boolean
 	local BadgeService = game:GetService("BadgeService")
 	
 	local success, badgeInfo = pcall(function()
@@ -19,21 +19,25 @@ function Utils.awardBadge(player : Player, badgeId : number)
 			elseif not result then
 				warn("Failed to award badge.")
 			end
+			
+			return result and awardSuccess
 		end
 	else
 		warn("Error while fetching badge info: " .. badgeInfo)
 	end
+	
+	return success
 end
 
-function Utils.isEffect(e : any)
+function Utils.isEffect(e : any) : boolean
 	return e:IsA("ParticleEmitter") or e:IsA("Fire") or e:IsA("Trail") or e:IsA("Beam") or e:IsA("Smoke") or e:IsA("Highlight")
 end
 
-function Utils.lerp(a, b, t)
+function Utils.lerp(a : Vector3, b : Vector3, t : number) : Vector3
 	return a + (b - a) * t
 end
 
-function Utils.quadraticBezier(a, b, c, t)
+function Utils.quadraticBezier(a : Vector3, b : Vector3, c : Vector3, t : number) : Vector3
 	local point1 = Utils.lerp(a, b, t)
 	local point2 = Utils.lerp(b, c, t)
 	local calculatedPoint = Utils.lerp(point1, point2, t)
@@ -41,7 +45,7 @@ function Utils.quadraticBezier(a, b, c, t)
 	return calculatedPoint
 end
 
-function Utils.isMobile()
+function Utils.isMobile() : boolean
 	local UIS = game:GetService("UserInputService")
 	local GuiService = game:GetService("GuiService")
 	
@@ -52,7 +56,7 @@ function Utils.isMobile()
 	end
 end
 
-function Utils.commaValue(n : number)
+function Utils.commaValue(n : number) : string
 	local formatted = n
 	local k = nil
 
@@ -88,7 +92,7 @@ function Utils.roundNumber(n : number, numberOfDecimalPlaces : number?) : number
 	end
 end
 
-function Utils.formatNumber(n : number, onlyIfHigherThan : number?, noCommas : boolean?) : number 
+function Utils.formatNumber(n : number, onlyIfHigherThan : number?, noCommas : boolean?) : string | number
 	local names = {"K","M","B","T","q","Q","s","S","O","N","d","U","D","t"}
 	local pows = {}
 	
@@ -104,11 +108,11 @@ function Utils.formatNumber(n : number, onlyIfHigherThan : number?, noCommas : b
 	return num * math.sign(n) .. names[p]
 end
 
-function Utils.Format(n : number, formatString : string)
+function Utils.Format(n : number, formatString : string) : string
 	return string.format(formatString, n)
 end
 
-function Utils.convertToHMS(sec : number, includeDecimals : boolean?)
+function Utils.convertToHMS(sec : number, includeDecimals : boolean?) : string
 	local mins = (sec - sec % 60) / 60
 	sec = sec - mins * 60
 
@@ -122,7 +126,7 @@ function Utils.convertToHMS(sec : number, includeDecimals : boolean?)
 	end
 end
 
-function Utils.getLastInput()
+function Utils.getLastInput() : string?
 	local UserInputService = game:GetService("UserInputService")
 	local lastType = UserInputService:GetLastInputType()
 	local uiType = Enum.UserInputType
@@ -137,6 +141,8 @@ function Utils.getLastInput()
 		or lastType == uiType.Gamepad7 or lastType == uiType.Gamepad8 then
 		return "controller"
 	end
+	
+	return nil
 end
 
 return Utils
