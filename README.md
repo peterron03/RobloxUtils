@@ -13,6 +13,8 @@ A collection of utility functions for Roblox that I tend to use often.
 | .commaValue | Adds commas to a number (ex. 1000 -> 1,000) |
 | .roundNumber | Similar to `math.round()`, but with an optional `numberOfDecimalPlaces` parameter |
 | .formatNumber | Formats numbers using letter abbreviation (ex. 1,294 -> 1.29K), all the way up to tredecillion, with optional parameters |
-| .Format | Equivalent to `string.format()` |
+| .Format | Formats a string based on the `formatString` parameter, equivalent to `string.format()` |
 | .convertToHMS | Converts the provided amount of seconds into hours, minutes, and seconds, with optional milliseconds |
 | .getLastInput | Returns either `"touch"`, `"controller"`, or `"mouse"` depending on the last input of `Players.LocalPlayer` |
+| .getCountryCode | Returns a 2 letter country code, equivalent to `LocalizationService:GetCountryRegionForPlayerAsync` |
+| .getCountryEmojiFromCode | Based on a module of codes, returns unicode text for a flag emoji for the provided country code |
