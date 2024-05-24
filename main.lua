@@ -160,7 +160,7 @@ function Utils.getCountryCode(player : Player) : string?
 end
 
 function Utils.getCountryEmojiFromCode(code : string) : string?
-	local Countries = script:FindFirstChild("Countries") or require(17601580421)
+	local Countries = require(script:FindFirstChild("Countries") or 17601580421)
 	
 	if Countries then
 		local country = Countries[string.upper(code)]
