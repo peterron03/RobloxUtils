@@ -163,7 +163,7 @@ function Utils.getCountryEmojiFromCode(code : string) : string?
 	local unicodes = require(script:FindFirstChild("Unicodes") or 17601580421)
 	
 	if unicodes then
-		local split = string.split(code)
+		local split = string.split(code, "")
 		return unicodes[string.lower(split[1])] .. unicodes[string.lower(split[2])]
 	else
 		return nil
