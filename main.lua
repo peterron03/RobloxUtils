@@ -160,15 +160,14 @@ function Utils.getCountryCode(player : Player) : string?
 end
 
 function Utils.getCountryEmojiFromCode(code : string) : string?
-	local Countries = require(script:FindFirstChild("Countries") or 17601580421)
+	local unicodes = require(script:FindFirstChild("Unicodes") or 17601580421)
 	
-	if Countries then
-		local country = Countries[string.upper(code)]
-		return country and country.Emoji
+	if unicodes then
+		local split = string.split(code)
+		return unicodes[string.lower(split[1])] .. unicodes[string.lower(split[2])]
 	else
 		return nil
 	end
 end
 
 return Utils
-
