@@ -13,12 +13,6 @@ function Utils.awardBadge(player : Player, badgeId : number) : boolean
 			local awardSuccess, result = pcall(function()
 				return BadgeService:AwardBadge(player.UserId, badgeId)
 			end)
-
-			if not awardSuccess then
-				warn("Error while awarding badge:", result)
-			elseif not result then
-				warn("Failed to award badge.")
-			end
 			
 			return result and awardSuccess
 		end
@@ -168,6 +162,16 @@ function Utils.getCountryEmojiFromCode(code : string) : string?
 	else
 		return nil
 	end
+end
+
+function Utils.getPlayerFromString(str : string) : Player?
+	for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+		if string.find(string.lower(v.Name), string.lower(str)) then
+			return v
+		end
+	end
+	
+	return nil
 end
 
 return Utils
