@@ -18,3 +18,4 @@ A collection of utility functions for Roblox that I tend to use often.
 | .getLastInput | Returns either `"touch"`, `"controller"`, or `"mouse"` depending on the last input of `Players.LocalPlayer` |
 | .getCountryCode | Returns a 2 letter country code, equivalent to `LocalizationService:GetCountryRegionForPlayerAsync` |
 | .getCountryEmojiFromCode | Based on a module of codes, returns unicode text for a flag emoji for the provided country code |
+| .getPlayerFromString | Uses `string.find()` to find the player that matches the provided string the most |
