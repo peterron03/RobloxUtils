@@ -174,4 +174,26 @@ function Utils.getPlayerFromString(str : string) : Player?
 	return nil
 end
 
+function Utils.canSendGameInvite(player : Player) : boolean?
+	local SocialService = game:GetService("SocialService")
+	
+	local success, canSend = pcall(function()
+		return SocialService:CanSendGameInviteAsync(player)
+	end)
+
+	return success and canSend
+end
+
+function Utils.isInGroupAsync(userId : number, groupId : number) : boolean?
+	local GroupService = game:GetService("GroupService")
+	
+	for _, v in pairs(GroupService:GetGroupsAsync(userId)) do
+		if v.Id == groupId then
+			return true
+		end
+	end
+		
+	return false
+end
+
 return Utils
