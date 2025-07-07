@@ -4,8 +4,14 @@ A collection of utility functions for Roblox that I tend to use often.
 ## Functions
 
 | Function | Description |
-| --- | --- |
-| .awardBadge | Awards the provided `player` with a badge, based on the provided `badgeId`, using BadgeService. |
+| .isPrivateServer | Returns `true` if the current server is a private server or `false` otherwise |
+| .createSignal | Creates a `RemoteEvent` given the provided `eventName`, parenting it to the provided `remotes` folder or ReplicatedStorage |
+| .lerpColor | Works similarly to `Vector3:Lerp`, but for `Color3`, lerping the provided `color1` and `color2` based on the provided `alpha` |
+| .playTempSoundClone | Clones the provided `Sound`, immediately plays it, then destroys it after either the provided `destroyAfter` or 5 seconds |
+| .getHRPAndHumanoidFromPlayer | Returns the `HumanoidRootPart` and `Humanoid` of the provided `Player`, if they exist |
+| .getRandomValuesFromArray | Returns a table which includes a random amount of values based on the `min` and `max`, with each value being randomly picked from the provided `array`, given the provided `increasedChanceForValue` |
+| .playerOwnsBadge | Returns `true` if `player` owns `badgeId` or `false` if not |
+| .awardBadge | Awards the provided `player` with a badge, based on the provided `badgeId`, using BadgeService |
 | .isEffect | Returns true if parameter is either a `ParticleEmitter`, `Fire`, `Trail`, `Beam`, `Smoke`, or `Highlight` |
 | .lerp | Simple lerp function; equivalent to `Vector3:Lerp()` |
 | .quadraticBezier | Function for bezier curves, mainly used for object manipulation |
