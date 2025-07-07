@@ -1,6 +1,9 @@
 # RobloxUtils
 A collection of utility functions for Roblox that I tend to use often.
 
+## Dependencies
+For the use of the `.getCountryEmojiFromCode` function, as well as potential future functions that may use unicodes, [Unicodes]([https://github.com/Sleitnick/Knit](https://github.com/peterron03/Unicodes)) is required. Make sure it's a child of whatever script the `.getCountryEmojiFromCode` function is part of.
+
 ## Functions
 
 | Function | Description |
