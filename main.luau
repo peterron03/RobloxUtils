@@ -1,3 +1,6 @@
+-- Services --
+local UserInputService = game:GetService("UserInputService")
+
 -- Utils --
 local Utils = {}
 local cachedBadgeInfo = {}
@@ -234,7 +237,6 @@ function Utils.convertToHMS(sec : number, includeDecimals : boolean?) : string
 end
 
 function Utils.getLastInput() : string?
-	local UserInputService = game:GetService("UserInputService")
 	local lastType = UserInputService:GetLastInputType()
 	local uiType = Enum.UserInputType
 
