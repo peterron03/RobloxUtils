@@ -5,7 +5,7 @@ local UserInputService = game:GetService("UserInputService")
 local Utils = {}
 local cachedBadgeInfo = {}
 
-function Utils.isPrivateServer()
+function Utils.isPrivateServer() : boolean
 	return game.PrivateServerId ~= "" and game.PrivateServerOwnerId ~= 0
 end
 
