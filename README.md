@@ -18,6 +18,8 @@ A collection of random (useful) functions for Roblox that I tend to use often.
 | .quadraticBezier | Function for bezier curves, mainly used for object manipulation |
 | .isMobile | Returns true if `Players.LocalPlayer` is on mobile, based on multiple factors |
 | .commaValue | Adds commas to a number (ex. 1000 -> 1,000) |
+| .toNewRange | Remaps the given number from the old range to the new range |
+| .roundToNearest | Rounds the given number to the nearest `multi` (ex. if `multi` is 10 and you give 52, the returned number will be 50 as that's the closest number divisible by 10) |
 | .roundNumber | Similar to `math.round()`, but with an optional `numberOfDecimalPlaces` parameter |
 | .formatNumber | Formats numbers using letter abbreviation (ex. 1,294 -> 1.29K), all the way up to tredecillion, with optional parameters |
 | .Format | Formats a string based on the `formatString` parameter; equivalent to `string.format()` |
