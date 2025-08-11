@@ -157,6 +157,14 @@ function Utils.commaValue(n : number) : string
 	return formatted
 end
 
+function Utils.toNewRange(n : number, oldMin : number, oldMax : number, min : number, max : number) : number
+	return (min + ((max - min) * ((n - oldMin) / (oldMax - oldMin))))
+end
+
+function Utils.roundToNearest(x : number, mult : number) : number
+	return math.round(x / mult) * mult
+end
+
 function Utils.roundNumber(n : number, numberOfDecimalPlaces : number?) : number
 	local split = string.split(string.format("%." .. (numberOfDecimalPlaces or 0) .. "f", n), ".")
 	local split2 = split[2] or "0"
