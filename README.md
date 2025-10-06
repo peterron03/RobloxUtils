@@ -31,3 +31,4 @@ A collection of random (useful) functions for Roblox that I tend to use often.
 | .getPlayerFromString | Uses `string.find()` to find the player that matches the provided string the most |
 | .canSendGameInvite | Returns true if player can send game invites; equivalent to `SocialService:CanSendGameInviteAsync(player)` |
 | .isInGroupAsync | Similar to `player:IsInGroup()`, except it doesn't cache and uses `GroupService:GetGroupsAsync()` |
+| .sendNotification | Uses Roblox's notification system, sending a notification with the various details provided |
