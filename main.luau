@@ -16,6 +16,14 @@ function Utils.createSignal(eventName : string, remotes : Folder?) : RemoteEvent
 	return signal
 end
 
+function Utils.roundVector(vector3 : Vector3, amount : number) : Vector3
+	return Vector3.new(
+		math.round(vec.X * amount) / amount,
+		math.round(vec.Y * amount) / amount,
+		math.round(vec.Z * amount) / amount
+	)
+end
+
 function Utils.lerpColor(color1 : Color3, color2 : Color3, alpha : number) : Color3
 	return Color3.new(
 		color1.R + (color2.R - color1.R) * alpha,
