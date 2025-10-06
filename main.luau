@@ -16,7 +16,7 @@ function Utils.createSignal(eventName : string, remotes : Folder?) : RemoteEvent
 	return signal
 end
 
-function Utils.roundVector(vector3 : Vector3, amount : number) : Vector3
+function Utils.roundVector3(vector3 : Vector3, amount : number) : Vector3
 	return Vector3.new(
 		math.round(vec.X * amount) / amount,
 		math.round(vec.Y * amount) / amount,
