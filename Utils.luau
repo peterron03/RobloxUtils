@@ -1,5 +1,9 @@
 -- Services --
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
+local BadgeService = game:GetService("BadgeService")
+local GuiService = game:GetService("GuiService")
 
 -- Utils --
 local Utils = {}
@@ -12,7 +16,7 @@ end
 function Utils.createSignal(eventName : string, remotes : Folder?) : RemoteEvent
 	local signal = Instance.new("RemoteEvent")
 	signal.Name = eventName
-	signal.Parent = remotes or game:GetService("ReplicatedStorage")
+	signal.Parent = remotes or ReplicatedStorage
 	return signal
 end
 
@@ -30,7 +34,7 @@ function Utils.isInViewCone(part : BasePart, cameraCFrame : CFrame, viewportSize
 	return dot >= minDot
 end
 
-function Utils.roundVector3(vector3 : Vector3, amount : number) : Vector3
+function Utils.roundVector3(vec : Vector3, amount : number) : Vector3
 	return Vector3.new(
 		math.round(vec.X * amount) / amount,
 		math.round(vec.Y * amount) / amount,
@@ -100,8 +104,6 @@ function Utils.getRandomValuesFromArray(array : {any}, min : number, max : numbe
 end
 
 function Utils.playerOwnsBadge(player : Player, badgeId : number) : boolean
-	local BadgeService = game:GetService("BadgeService")
-	
 	local success, result = pcall(function()
 		return BadgeService:UserHasBadgeAsync(player.UserId, badgeId)
 	end)
@@ -115,8 +117,6 @@ function Utils.playerOwnsBadge(player : Player, badgeId : number) : boolean
 end
 
 function Utils.awardBadge(player : Player, badgeId : number, timeDelay : number?) : boolean
-	local BadgeService = game:GetService("BadgeService")
-	
 	if type(timeDelay) ~= "number" then timeDelay = 0 end
 	
 	local success, badgeInfo = pcall(function()
@@ -172,8 +172,7 @@ function Utils.quadraticBezier(a : Vector3, b : Vector3, c : Vector3, t : number
 end
 
 function Utils.isMobile() : boolean
-	local UIS = game:GetService("UserInputService")
-	local GuiService = game:GetService("GuiService")
+	local UIS = UserInputService
 	
 	if UIS.TouchEnabled and not UIS.KeyboardEnabled and not UIS.MouseEnabled and not UIS.GamepadEnabled and not GuiService:IsTenFootInterface() then
 		return true
@@ -213,7 +212,7 @@ function Utils.roundNumber(n : number, numberOfDecimalPlaces : number?) : number
 	if newSplit and newSplit[1] then
 		local toReturn = ""
 
-		for _, place in newSplit do
+		for _, place in pairs(newSplit) do
 			toReturn = toReturn .. place
 		end
 		
@@ -280,7 +279,7 @@ function Utils.convertToHMS(sec : number, includeDecimals : boolean?) : string
 	end
 end
 
-function Utils.getLastInput() : string?
+function Utils.getLastInput() : ("touch" | "mouse" | "controller")?
 	local lastType = UserInputService:GetLastInputType()
 	local uiType = Enum.UserInputType
 
@@ -324,7 +323,7 @@ function Utils.getCountryEmojiFromCode(code : string) : string?
 end
 
 function Utils.getPlayerFromString(str : string) : Player?
-	for _, v in game:GetService("Players"):GetPlayers() do
+	for _, v in pairs(game:GetService("Players"):GetPlayers()) do
 		if string.find(string.lower(v.Name), string.lower(str)) then
 			return v
 		end
@@ -346,7 +345,7 @@ end
 function Utils.isInGroupAsync(userId : number, groupId : number) : boolean?
 	local GroupService = game:GetService("GroupService")
 	
-	for _, v in GroupService:GetGroupsAsync(userId) do
+	for _, v in pairs(GroupService:GetGroupsAsync(userId)) do
 		if v.Id == groupId then
 			return true
 		end
