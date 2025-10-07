@@ -1,5 +1,5 @@
 # RobloxUtils
-A collection of random (useful) functions for Roblox that I tend to use often.
+A collection of random (useful) utility functions for Roblox that I tend to use fairly often.
 
 ## Functions
 
