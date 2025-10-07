@@ -199,7 +199,7 @@ function Utils.roundNumber(n : number, numberOfDecimalPlaces : number?) : number
 	if newSplit and newSplit[1] then
 		local toReturn = ""
 
-		for _, place in pairs(newSplit) do
+		for _, place in newSplit do
 			toReturn = toReturn .. place
 		end
 		
@@ -310,7 +310,7 @@ function Utils.getCountryEmojiFromCode(code : string) : string?
 end
 
 function Utils.getPlayerFromString(str : string) : Player?
-	for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+	for _, v in game:GetService("Players"):GetPlayers() do
 		if string.find(string.lower(v.Name), string.lower(str)) then
 			return v
 		end
@@ -332,7 +332,7 @@ end
 function Utils.isInGroupAsync(userId : number, groupId : number) : boolean?
 	local GroupService = game:GetService("GroupService")
 	
-	for _, v in pairs(GroupService:GetGroupsAsync(userId)) do
+	for _, v in GroupService:GetGroupsAsync(userId) do
 		if v.Id == groupId then
 			return true
 		end
