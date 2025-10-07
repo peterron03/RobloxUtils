@@ -16,6 +16,20 @@ function Utils.createSignal(eventName : string, remotes : Folder?) : RemoteEvent
 	return signal
 end
 
+function Utils.isInViewCone(part : BasePart, cameraCFrame : CFrame, viewportSize : Vector2, fov : number) : boolean
+	local camForward = cameraCFrame.LookVector
+	local toPart = (part.Position - cameraCFrame.Position).Unit
+
+	local dot = camForward:Dot(toPart)
+
+	local vFov = math.rad(fov)
+	local aspect = viewportSize.X / viewportSize.Y
+	local hFov = 2 * math.atan(math.tan(vFov / 2) * aspect)
+	local minDot = math.cos(hFov / 2)
+
+	return dot >= minDot
+end
+
 function Utils.roundVector3(vector3 : Vector3, amount : number) : Vector3
 	return Vector3.new(
 		math.round(vec.X * amount) / amount,
