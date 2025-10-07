@@ -7,6 +7,7 @@ A collection of random (useful) functions for Roblox that I tend to use often.
 | --- | --- |
 | .isPrivateServer | Returns `true` if the current server is a private server or `false` otherwise |
 | .createSignal | Creates a `RemoteEvent` given the provided `eventName`, parenting it to the provided `remotes` folder or ReplicatedStorage |
+| .isInViewCone | Returns a `boolean` based on if a `part` can be seen by a player's camera, given the `cameraCFrame`, `viewportSize`, and `fov` |
 | .roundVector3 | Used mainly for floating points, rounds each number in a `Vector3` to the nearest `amount` |
 | .lerpColor | Works similarly to `Vector3:Lerp`, but for `Color3`, lerping the provided `color1` and `color2` based on the provided `alpha` |
 | .playTempSoundClone | Clones the provided `Sound`, immediately plays it, then destroys it after either the provided `destroyAfter` or 5 seconds |
