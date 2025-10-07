@@ -64,6 +64,20 @@ function Utils.getHRPAndHumanoidFromPlayer(player : Player) : (BasePart, Humanoi
 	return hrp, humanoid
 end
 
+function Utils.getAlivePlayers() : {Player}
+	local alivePlayers = {}
+	
+	for _, player in Players:GetPlayers() do
+		local hrp, humanoid = Utils.getHRPAndHumanoidFromPlayer(player)
+		
+		if hrp and humanoid and humanoid.Health > 0 then
+			table.insert(alivePlayers, player)
+		end
+	end
+	
+	return alivePlayers
+end
+
 function Utils.getRandomValuesFromArray(array : {any}, min : number, max : number, increasedChanceForValue : {value : string, chance : number}?) : {any}
 	if increasedChanceForValue then
 		local toAdd = math.round(#array * increasedChanceForValue.chance) - 1
