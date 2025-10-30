@@ -5,6 +5,7 @@ A collection of random (useful) utility functions for Roblox that I tend to use 
 
 | Function | Description |
 | --- | --- |
+| .registerDebounce | Used for functions that should only be called if the last debounce of a `player` has passed |
 | .isPrivateServer | Returns `true` if the current server is a private server or `false` otherwise |
 | .createSignal | Creates a `RemoteEvent` given the provided `eventName`, parenting it to the provided `remotes` folder or ReplicatedStorage |
 | .isInViewCone | Returns a `boolean` based on if a `part` can be seen by a player's camera, given the `cameraCFrame`, `viewportSize`, and `fov` |
