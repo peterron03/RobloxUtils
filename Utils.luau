@@ -8,6 +8,23 @@ local GuiService = game:GetService("GuiService")
 -- Utils --
 local Utils = {}
 local cachedBadgeInfo = {}
+local debounces = {}
+
+function Utils.registerDebounce(player : Player, func : (any) -> (any), delayTime : number?) : (boolean, any?)
+	if debounces[player] then return false end
+	
+	debounces[player] = true
+	
+	local success, result = pcall(func)
+	
+	task.delay(delayTime or 0.1, function()
+		debounces[player] = nil
+	end)
+	
+	if not success then warn(result) end
+	
+	return success, result
+end
 
 function Utils.isPrivateServer() : boolean
 	return game.PrivateServerId ~= "" and game.PrivateServerOwnerId ~= 0
