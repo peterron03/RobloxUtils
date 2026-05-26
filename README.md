@@ -5,6 +5,11 @@ A collection of random (useful) utility functions for Roblox that I tend to use 
 
 | Function | Description |
 | --- | --- |
+| .isPointInPart | Returns a boolean for whether a given `Vector3` is inside a given `BasePart` |
+| .isFriendsWith | Returns a boolean for whether the given `Player` is friends with the given `UserId`, including a `defaultOnFail` option |
+| .getPolygonFromBarriers | Returns a `polygon` to be used along with `.isPointInsidePolygon()` |
+| .isPointInsidePolygon | Returns a boolean for whether the given `Vector3` point is inside the given `polygon` |
+| .runFunctionWithBindableEvent | Fires a given `function` through a `BindableEvent`, calling the `function` on the other side |
 | .registerDebounce | Used for functions that should only be called if the last debounce of a `player` has passed |
 | .isPrivateServer | Returns `true` if the current server is a private server or `false` otherwise |
 | .createSignal | Creates a `RemoteEvent` given the provided `eventName`, parenting it to the provided `remotes` folder or ReplicatedStorage |
