@@ -1,27 +1,153 @@
--- Services --
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UserInputService = game:GetService("UserInputService")
-local BadgeService = game:GetService("BadgeService")
-local GuiService = game:GetService("GuiService")
+--[[
+@TheAlmightyForehead
+May 26th, 2026
+This consists of a bunch of "generic" utility functions that can be used for various things
+]]
 
--- Utils --
-local Utils = {}
-local cachedBadgeInfo = {}
-local debounces = {}
+-- SERVICES --
+const UserInputService = game:GetService("UserInputService")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
+const BadgeService = game:GetService("BadgeService")
+const LocalizationService = game:GetService("LocalizationService")
+const Players = game:GetService("Players")
+const SocialService = game:GetService("SocialService")
+const GroupService = game:GetService("GroupService")
+const GuiService = game:GetService("GuiService")
+const StarterGui = game:GetService("StarterGui")
+
+-- UTILS --
+const Utils = {}
+const cachedBadgeInfo = {}
+const debounces = {}
+
+function Utils.isPointInPart(point : Vector3, part : BasePart) : boolean
+	const p = part.CFrame:PointToObjectSpace(point)
+	const s = part.Size/2
+	
+	return (p.X >= -s.X and p.X <= s.X) and (p.Y >= -s.Y and p.Y <= s.Y) and (p.Z >= -s.Z and p.Z <= s.Z)
+end
+
+function Utils.isFriendsWith(player : Player, userId : number, defaultOnFail : boolean?) : boolean
+	const success, result = pcall(function()
+		return player:IsFriendsWithAsync(userId)
+	end)
+	
+	if success then
+		return result
+	else
+		return if defaultOnFail ~= nil then defaultOnFail else false
+	end
+end
+
+function Utils.getPolygonFromBarriers(barriers)
+	const pts = {}
+
+	for _, part in barriers do
+		if part:IsA("BasePart") then
+			const c = part.CFrame
+			const size = part.Size / 2
+
+			const corners = {
+				c * Vector3.new( size.X, -size.Y,  size.Z),
+				c * Vector3.new(-size.X, -size.Y,  size.Z),
+				c * Vector3.new(-size.X, -size.Y, -size.Z),
+				c * Vector3.new( size.X, -size.Y, -size.Z),
+			}
+
+			for _, p in corners do
+				table.insert(pts, Vector2.new(p.X, p.Z))
+			end
+		end
+	end
+
+	table.sort(pts, function(a,b)
+		if a.X == b.X then return a.Y < b.Y end
+		return a.X < b.X
+	end)
+
+	const function cross(o, a, b)
+		return (a.X - o.X) * (b.Y - o.Y) - (a.Y - o.Y) * (b.X - o.X)
+	end
+
+	const lower = {}
+	
+	for _, p in pts do
+		while #lower >= 2 and cross(lower[#lower-1], lower[#lower], p) <= 0 do
+			table.remove(lower)
+		end
+		
+		table.insert(lower, p)
+	end
+
+	const upper = {}
+	
+	for i = #pts, 1, -1 do
+		const p = pts[i]
+		
+		while #upper >= 2 and cross(upper[#upper-1], upper[#upper], p) <= 0 do
+			table.remove(upper)
+		end
+		
+		table.insert(upper, p)
+	end
+
+	table.remove(upper, 1)
+	table.remove(lower, 1)
+
+	const hull = {}
+	
+	for _, p in lower do table.insert(hull, p) end
+	for _, p in upper do table.insert(hull, p) end
+
+	return hull
+end
+
+function Utils.isPointInsidePolygon(point, polygon)
+	local inside = false
+	local j = #polygon
+
+	for i = 1, #polygon do
+		const pi = polygon[i]
+		const pj = polygon[j]
+
+		if ((pi.Y > point.Y) ~= (pj.Y > point.Y)) and
+			(point.X < (pj.X - pi.X) * (point.Y - pi.Y) / (pj.Y - pi.Y) + pi.X) then
+			inside = not inside
+		end
+
+		j = i
+	end
+
+	return inside
+end
+
+function Utils.runFunctionWithBindableEvent(func : (any) -> (any))
+	local event = script:FindFirstChild("BindableEvent")
+	
+	if not event then
+		event = Instance.new("BindableEvent")
+		event.Parent = script
+		event.Event:Connect(function(func)
+			const success, err = pcall(func)
+			if not success then warn(err) end
+		end)
+	end
+	
+	event:Fire(func)
+end
 
 function Utils.registerDebounce(player : Player, func : (any) -> (any), delayTime : number?) : (boolean, any?)
 	if debounces[player] then return false end
 	
 	debounces[player] = true
 	
-	local success, result = pcall(func)
+	const success, result = pcall(func)
 	
-	task.delay(delayTime or 0.1, function()
-		debounces[player] = nil
-	end)
+	if not success then warn(debug.traceback(result)) end
 	
-	if not success then warn(result) end
+	task.wait(delayTime or 0.1)
+	
+	debounces[player] = nil
 	
 	return success, result
 end
@@ -31,22 +157,22 @@ function Utils.isPrivateServer() : boolean
 end
 
 function Utils.createSignal(eventName : string, remotes : Folder?) : RemoteEvent
-	local signal = Instance.new("RemoteEvent")
+	const signal = Instance.new("RemoteEvent")
 	signal.Name = eventName
 	signal.Parent = remotes or ReplicatedStorage
 	return signal
 end
 
 function Utils.isInViewCone(part : BasePart, cameraCFrame : CFrame, viewportSize : Vector2, fov : number) : boolean
-	local camForward = cameraCFrame.LookVector
-	local toPart = (part.Position - cameraCFrame.Position).Unit
+	const camForward = cameraCFrame.LookVector
+	const toPart = (part.Position - cameraCFrame.Position).Unit
 
-	local dot = camForward:Dot(toPart)
+	const dot = camForward:Dot(toPart)
 
-	local vFov = math.rad(fov)
-	local aspect = viewportSize.X / viewportSize.Y
-	local hFov = 2 * math.atan(math.tan(vFov / 2) * aspect)
-	local minDot = math.cos(hFov / 2)
+	const vFov = math.rad(fov)
+	const aspect = viewportSize.X / viewportSize.Y
+	const hFov = 2 * math.atan(math.tan(vFov / 2) * aspect)
+	const minDot = math.cos(hFov / 2)
 
 	return dot >= minDot
 end
@@ -67,9 +193,9 @@ function Utils.lerpColor(color1 : Color3, color2 : Color3, alpha : number) : Col
 	)
 end
 
-function Utils.playTempSoundClone(sound : Sound, destroyAfter : number?)
-	local cloned = sound:Clone()
-	cloned.Parent = sound.Parent
+function Utils.playTempSoundClone(sound : Sound, destroyAfter : number?, parent : Instance?)
+	const cloned = sound:Clone()
+	cloned.Parent = parent or sound.Parent
 	cloned:Play()
 
 	task.delay(destroyAfter or 5, function()
@@ -78,30 +204,30 @@ function Utils.playTempSoundClone(sound : Sound, destroyAfter : number?)
 end
 
 function Utils.getHRPAndHumanoidFromPlayer(player : Player) : (BasePart, Humanoid)
-	local character = player.Character
-	local hrp = character and character:FindFirstChild("HumanoidRootPart")
-	local humanoid = character and character:FindFirstChild("Humanoid")
+	const character = player.Character
+	const hrp = character and character:FindFirstChild("HumanoidRootPart")
+	const humanoid = character and character:FindFirstChild("Humanoid")
 
 	return hrp, humanoid
 end
 
 function Utils.getAlivePlayers() : {Player}
-	local alivePlayers = {}
-	
+	const alivePlayers = {}
+
 	for _, player in Players:GetPlayers() do
-		local hrp, humanoid = Utils.getHRPAndHumanoidFromPlayer(player)
-		
+		const hrp, humanoid = Utils.getHRPAndHumanoidFromPlayer(player)
+
 		if hrp and humanoid and humanoid.Health > 0 then
 			table.insert(alivePlayers, player)
 		end
 	end
-	
+
 	return alivePlayers
 end
 
 function Utils.getRandomValuesFromArray(array : {any}, min : number, max : number, increasedChanceForValue : {value : string, chance : number}?) : {any}
 	if increasedChanceForValue then
-		local toAdd = math.round(#array * increasedChanceForValue.chance) - 1
+		const toAdd = math.round(#array * increasedChanceForValue.chance) - 1
 
 		if toAdd > 0 then
 			for i = 1, toAdd do
@@ -110,8 +236,8 @@ function Utils.getRandomValuesFromArray(array : {any}, min : number, max : numbe
 		end
 	end
 	
-	local random = math.random(min, max)
-	local values = {}
+	const random = math.random(min, max)
+	const values = {}
 
 	for i = 1, random do
 		table.insert(values, array[math.random(1, #array)])
@@ -121,7 +247,7 @@ function Utils.getRandomValuesFromArray(array : {any}, min : number, max : numbe
 end
 
 function Utils.playerOwnsBadge(player : Player, badgeId : number) : boolean
-	local success, result = pcall(function()
+	const success, result = pcall(function()
 		return BadgeService:UserHasBadgeAsync(player.UserId, badgeId)
 	end)
 	
@@ -136,7 +262,7 @@ end
 function Utils.awardBadge(player : Player, badgeId : number, timeDelay : number?) : boolean
 	if type(timeDelay) ~= "number" then timeDelay = 0 end
 	
-	local success, badgeInfo = pcall(function()
+	const success, badgeInfo = pcall(function()
 		if not cachedBadgeInfo[badgeId] then
 			cachedBadgeInfo[badgeId] = BadgeService:GetBadgeInfoAsync(badgeId)
 		end
@@ -147,15 +273,15 @@ function Utils.awardBadge(player : Player, badgeId : number, timeDelay : number?
 	if success then
 		task.delay(timeDelay or 0, function()
 			if badgeInfo.IsEnabled then
-				local awardSuccess, result = pcall(function()
+				const awardSuccess, result = pcall(function()
 					if not Utils.playerOwnsBadge(player, badgeId) then
-						return BadgeService:AwardBadge(player.UserId, badgeId)
+						return BadgeService:AwardBadgeAsync(player.UserId, badgeId)
 					end
 				end)
 				
 				if not awardSuccess then
-					local success2, result2 = pcall(function()
-						return BadgeService:AwardBadge(player.UserId, badgeId)
+					const success2, result2 = pcall(function()
+						return BadgeService:AwardBadgeAsync(player.UserId, badgeId)
 					end)
 					
 					return result2 and success2
@@ -181,15 +307,15 @@ function Utils.lerp(a : Vector3, b : Vector3, t : number) : Vector3
 end
 
 function Utils.quadraticBezier(a : Vector3, b : Vector3, c : Vector3, t : number) : Vector3
-	local point1 = Utils.lerp(a, b, t)
-	local point2 = Utils.lerp(b, c, t)
-	local calculatedPoint = Utils.lerp(point1, point2, t)
+	const point1 = Utils.lerp(a, b, t)
+	const point2 = Utils.lerp(b, c, t)
+	const calculatedPoint = Utils.lerp(point1, point2, t)
 
 	return calculatedPoint
 end
 
 function Utils.isMobile() : boolean
-	local UIS = UserInputService
+	const UIS = UserInputService
 	
 	if UIS.TouchEnabled and not UIS.KeyboardEnabled and not UIS.MouseEnabled and not UIS.GamepadEnabled and not GuiService:IsTenFootInterface() then
 		return true
@@ -218,9 +344,9 @@ function Utils.roundToNearest(x : number, mult : number) : number
 end
 
 function Utils.roundNumber(n : number, numberOfDecimalPlaces : number?) : number
-	local split = string.split(string.format("%." .. (numberOfDecimalPlaces or 0) .. "f", n), ".")
-	local split2 = split[2] or "0"
-	local newSplit = string.split(split2, "")
+	const split = string.split(string.format("%." .. (numberOfDecimalPlaces or 0) .. "f", n), ".")
+	const split2 = split[2] or "0"
+	const newSplit = string.split(split2, "")
 
 	while tostring(newSplit[#split2]) == "0" do
 		table.remove(newSplit, #split2)
@@ -233,30 +359,30 @@ function Utils.roundNumber(n : number, numberOfDecimalPlaces : number?) : number
 			toReturn = toReturn .. place
 		end
 		
-		local toNumber = tonumber(split[1] .. "." .. toReturn)
+		const toNumber = tonumber(split[1] .. "." .. toReturn)
 
 		return (toNumber and toNumber) or (split[1] .. "." .. toReturn)
 	else
-		local toNumber = tonumber(split[1])
+		const toNumber = tonumber(split[1])
 		
 		return (toNumber and toNumber) or (split[1])
 	end
 end
 
 function Utils.formatNumber(n : number, onlyIfHigherThan : number?, noCommas : boolean?) : string | number
-	local names = {"K","M","B","T","q","Q","s","S","O","N","d","U","D","t"}
-	local pows = {}
+	const names = {"K","M","B","T","q","Q","s","S","O","N","d","U","D","t"}
+	const pows = {}
 	
-	onlyIfHigherThan = onlyIfHigherThan or 1000
+	onlyIfHigherThan = onlyIfHigherThan or math.huge
 	
 	for i = 1, #names do table.insert(pows, 1000^i) end
 	
-	local ab = math.abs(n)
+	const ab = math.abs(n)
 
 	if ab < onlyIfHigherThan then return (noCommas and n) or (Utils.commaValue(math.round(n))) end 
 
-	local p = math.min(math.floor(math.log10(ab) / 3), #names)
-	local num = math.floor(ab / pows[p] * 100) / 100
+	const p = math.min(math.floor(math.log10(ab) / 3), #names)
+	const num = math.floor(ab / pows[p] * 100) / 100
 
 	return num * math.sign(n) .. names[p]
 end
@@ -297,8 +423,8 @@ function Utils.convertToHMS(sec : number, includeDecimals : boolean?) : string
 end
 
 function Utils.getLastInput() : ("touch" | "mouse" | "controller")?
-	local lastType = UserInputService:GetLastInputType()
-	local uiType = Enum.UserInputType
+	const lastType = UserInputService:GetLastInputType()
+	const uiType = Enum.UserInputType
 
 	if lastType == uiType.Touch then
 		return "touch"
@@ -315,9 +441,7 @@ function Utils.getLastInput() : ("touch" | "mouse" | "controller")?
 end
 
 function Utils.getCountryCode(player : Player) : string?
-	local LocalizationService = game:GetService("LocalizationService")
-
-	local result, code = pcall(function()
+	const result, code = pcall(function()
 		return LocalizationService:GetCountryRegionForPlayerAsync(player)
 	end)
 
@@ -329,10 +453,10 @@ function Utils.getCountryCode(player : Player) : string?
 end
 
 function Utils.getCountryEmojiFromCode(code : string) : string?
-	local unicodes = require(script:FindFirstChild("Unicodes") or 17601580421)
+	const unicodes = require(script:FindFirstChild("Unicodes") or 17601580421)
 	
 	if unicodes then
-		local split = string.split(code, "")
+		const split = string.split(code, "")
 		return unicodes[string.lower(split[1])] .. unicodes[string.lower(split[2])]
 	else
 		return nil
@@ -340,7 +464,7 @@ function Utils.getCountryEmojiFromCode(code : string) : string?
 end
 
 function Utils.getPlayerFromString(str : string) : Player?
-	for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+	for _, v in pairs(Players:GetPlayers()) do
 		if string.find(string.lower(v.Name), string.lower(str)) then
 			return v
 		end
@@ -350,9 +474,7 @@ function Utils.getPlayerFromString(str : string) : Player?
 end
 
 function Utils.canSendGameInvite(player : Player) : boolean?
-	local SocialService = game:GetService("SocialService")
-	
-	local success, canSend = pcall(function()
+	const success, canSend = pcall(function()
 		return SocialService:CanSendGameInviteAsync(player)
 	end)
 
@@ -360,8 +482,6 @@ function Utils.canSendGameInvite(player : Player) : boolean?
 end
 
 function Utils.isInGroupAsync(userId : number, groupId : number) : boolean?
-	local GroupService = game:GetService("GroupService")
-	
 	for _, v in pairs(GroupService:GetGroupsAsync(userId)) do
 		if v.Id == groupId then
 			return true
@@ -372,8 +492,6 @@ function Utils.isInGroupAsync(userId : number, groupId : number) : boolean?
 end
 
 function Utils.sendNotification(title : string, message : string, icon : string?, button1 : string?, button2 : string?, callback : BindableEvent?)
-	local StarterGui = game:GetService("StarterGui")
-	
 	StarterGui:SetCore("SendNotification", {
 		Title = title,
 		Text = message,
