@@ -20,6 +20,41 @@ const Utils = {}
 const cachedBadgeInfo = {}
 const debounces = {}
 
+function Utils.findFirstChildWithTag(parent : Instance, tag : string) : Instance?
+	for _, child in parent:GetChildren() do
+		if child:HasTag(tag) then
+			return child
+		end
+	end
+	
+	return nil
+end
+
+function Utils.applyEffects(folder : Instance, root : BasePart, destroySoundAfter : number?) : {Instance}
+	const newEffects = {}
+	
+	for _, v in folder:GetChildren() do
+		local effect = v:Clone()
+		effect.Parent = root
+		
+		if effect:IsA("Sound") then
+			Utils.playTempSoundClone(effect, destroySoundAfter or 10)
+		end
+		
+		table.insert(newEffects, effect)
+	end
+	
+	return newEffects
+end
+
+function Utils.hasProperty(object : Instance, propertyName : string)
+	local success, _ = pcall(function() 
+		object[propertyName] = object[propertyName]
+	end)
+	
+	return success
+end
+
 function Utils.isPointInPart(point : Vector3, part : BasePart) : boolean
 	const p = part.CFrame:PointToObjectSpace(point)
 	const s = part.Size/2
