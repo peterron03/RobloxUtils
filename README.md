@@ -5,6 +5,9 @@ A collection of random (useful) utility functions for Roblox that I tend to use 
 
 | Function | Description |
 | --- | --- |
+| .findFirstChildWithTag | Returns the first child found of the given `parent` that has the given `tag` |
+| .applyEffects | Used to apply effects from the given `folder` to the given `part` via `:Clone()` |
+| .hasProperty | Check to see if the given `object` has the given `propertyName`, returning a `boolean` as a result |
 | .isPointInPart | Returns a boolean for whether a given `Vector3` is inside a given `BasePart` |
 | .isFriendsWith | Returns a boolean for whether the given `Player` is friends with the given `UserId`, including a `defaultOnFail` option |
 | .getPolygonFromBarriers | Returns a `polygon` to be used along with `.isPointInsidePolygon()` |
