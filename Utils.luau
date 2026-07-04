@@ -14,6 +14,7 @@ const SocialService = game:GetService("SocialService")
 const GroupService = game:GetService("GroupService")
 const GuiService = game:GetService("GuiService")
 const StarterGui = game:GetService("StarterGui")
+const Debris = game:GetService("Debris")
 
 -- UTILS --
 const Utils = {}
@@ -228,14 +229,15 @@ function Utils.lerpColor(color1 : Color3, color2 : Color3, alpha : number) : Col
 	)
 end
 
-function Utils.playTempSoundClone(sound : Sound, destroyAfter : number?, parent : Instance?)
+function Utils.playTempSoundClone(sound : Sound, destroyAfter : number?, parent : Instance?) : Sound
 	const cloned = sound:Clone()
+	
+	Debris:AddItem(cloned, destroyAfter, 5)
+	
 	cloned.Parent = parent or sound.Parent
 	cloned:Play()
-
-	task.delay(destroyAfter or 5, function()
-		cloned:Destroy()
-	end)
+	
+	return cloned
 end
 
 function Utils.getHRPAndHumanoidFromPlayer(player : Player) : (BasePart, Humanoid)
