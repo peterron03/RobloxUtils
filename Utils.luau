@@ -21,6 +21,11 @@ const Utils = {}
 const cachedBadgeInfo = {}
 const debounces = {}
 
+function Utils.capitalizeFirst(str : string)
+	if str == "" then return "" end
+	return string.upper(string.sub(str, 1, 1)) .. string.lower(string.sub(str, 2))
+end
+
 function Utils.findFirstChildWithTag(parent : Instance, tag : string) : Instance?
 	for _, child in parent:GetChildren() do
 		if child:HasTag(tag) then
