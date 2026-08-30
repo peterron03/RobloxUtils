@@ -5,6 +5,7 @@ A collection of random (useful) utility functions for Roblox that I tend to use 
 
 | Function | Description |
 | --- | --- |
+| .capitalizeFirst | Takes a `string` and returns it, capitalizing only the first letter |
 | .findFirstChildWithTag | Returns the first child found of the given `parent` that has the given `tag` |
 | .applyEffects | Used to apply effects from the given `folder` to the given `part` via `:Clone()` |
 | .hasProperty | Check to see if the given `object` has the given `propertyName`, returning a `boolean` as a result |
