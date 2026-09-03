@@ -358,8 +358,8 @@ end
 
 function Utils.isMobile() : boolean
 	const UIS = UserInputService
-	
-	if UIS.TouchEnabled and not UIS.KeyboardEnabled and not UIS.MouseEnabled and not UIS.GamepadEnabled and not GuiService:IsTenFootInterface() then
+
+	if UIS.TouchEnabled and not UIS.KeyboardEnabled and not UIS.GamepadEnabled and not GuiService:IsTenFootInterface() then
 		return true
 	else
 		return false
