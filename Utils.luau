@@ -21,6 +21,20 @@ const Utils = {}
 const cachedBadgeInfo = {}
 const debounces = {}
 
+function Utils.weldModelToPrimaryPart(model : Model) : Model
+	if not model.PrimaryPart then warn("Model does not have a primary part") return model end
+	
+	for _, part in model:GetDescendants() do
+		if part == model.PrimaryPart then continue end
+		const newWeld = Instance.new("WeldConstraint")
+		newWeld.Part0 = model.PrimaryPart
+		newWeld.Part1 = part
+		newWeld.Parent = part
+	end
+	
+	return model
+end
+
 function Utils.capitalizeFirst(str : string)
 	if str == "" then return "" end
 	return string.upper(string.sub(str, 1, 1)) .. string.lower(string.sub(str, 2))
