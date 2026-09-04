@@ -5,6 +5,7 @@ A collection of random (useful) utility functions for Roblox that I tend to use 
 
 | Function | Description |
 | --- | --- |
+| .weldModelToPrimaryPart | Welds all the parts within the provided `Model` to the `PrimaryPart` of said `Model` |
 | .capitalizeFirst | Takes a `string` and returns it, capitalizing only the first letter |
 | .findFirstChildWithTag | Returns the first child found of the given `parent` that has the given `tag` |
 | .applyEffects | Used to apply effects from the given `folder` to the given `part` via `:Clone()` |
