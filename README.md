@@ -5,6 +5,8 @@ A collection of random (useful) utility functions for Roblox that I tend to use 
 
 | Function | Description |
 | --- | --- |
+| .getMinMaxPositionsForPart | Given a `BasePart` and an optional `offset`, returns two positions which are the minimum and maximum world position vectors within a part |
+| .clampPosition | Similar to `math.clamp()`, except for `Vector3` |
 | .weldModelToPrimaryPart | Welds all the parts within the provided `Model` to the `PrimaryPart` of said `Model` |
 | .capitalizeFirst | Takes a `string` and returns it, capitalizing only the first letter |
 | .findFirstChildWithTag | Returns the first child found of the given `parent` that has the given `tag` |
