@@ -21,6 +21,26 @@ const Utils = {}
 const cachedBadgeInfo = {}
 const debounces = {}
 
+function Utils.getMinMaxPositionsForPart(part : BasePart, offset : number) : (Vector3, Vector3)
+	const size = part.Size
+	const pos = part.Position
+	const halfSizeX = size.X / 2
+	const halfSizeZ = size.Z / 2
+	const minPosX = pos.X - halfSizeX + (offset or 0)
+	const maxPosX = pos.X + halfSizeX - (offset or 0)
+	const minPosZ = pos.Z - halfSizeZ + (offset or 0)
+	const maxPosZ = pos.Z + halfSizeZ - (offset or 0)
+	return Vector3.new(minPosX, 0, minPosZ), Vector3.new(maxPosX, 0, maxPosZ)
+end
+
+function Utils.clampPosition(position : Vector3, min : Vector3, max : Vector3) : Vector3
+	return Vector3.new(
+		math.clamp(position.X, min.X, max.X),
+		math.clamp(position.Y, min.Y, max.Y),
+		math.clamp(position.Z, min.Z, max.Z)
+	)
+end
+
 function Utils.weldModelToPrimaryPart(model : Model) : Model
 	if not model.PrimaryPart then warn("Model does not have a primary part") return model end
 	
