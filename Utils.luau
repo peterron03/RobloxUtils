@@ -21,7 +21,7 @@ const Utils = {}
 const cachedBadgeInfo = {}
 const debounces = {}
 
-function Utils.getMinMaxPositionsForPart(part : BasePart, offset : number) : (Vector3, Vector3)
+function Utils.getMinMaxPositionsForPart(part : BasePart, offset : number?) : (Vector3, Vector3)
 	const size = part.Size
 	const pos = part.Position
 	const halfSizeX = size.X / 2
