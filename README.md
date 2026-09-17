@@ -5,6 +5,7 @@ A collection of random (useful) utility functions for Roblox that I tend to use 
 
 | Function | Description |
 | --- | --- |
+| .fireFor | Takes a `RemoteEvent` and a table of `Players`, firing the event for all those specified players with any extra optional arguments |
 | .getMinMaxPositionsForPart | Given a `BasePart` and an optional `offset`, returns two positions which are the minimum and maximum world position vectors within a part |
 | .clampPosition | Similar to `math.clamp()`, except for `Vector3` |
 | .weldModelToPrimaryPart | Welds all the parts within the provided `Model` to the `PrimaryPart` of said `Model` |
