@@ -20,6 +20,35 @@ const Debris = game:GetService("Debris")
 const Utils = {}
 const cachedBadgeInfo = {}
 const debounces = {}
+const queues = {}
+
+function Utils.queueTask(queueName : string, taskTime : number, taskFunction : () -> ())
+	task.spawn(function()
+		if not queues[queueName] then
+			queues[queueName] = {
+				Active = false,
+				Time = -1
+			}
+		end
+		
+		if queues[queueName].Time < taskTime then
+			if queues[queueName].Active then
+				repeat task.wait() until not queues[queueName].Active
+			end
+		else
+			return
+		end
+		
+		queues[queueName] = {
+			Active = true,
+			Time = taskTime
+		}
+		
+		taskFunction()
+		
+		queues[queueName].Active = false
+	end)
+end
 
 function Utils.fireFor(remoteEvent : RemoteEvent, players : {Player}, ...)
 	for _, player in players do
