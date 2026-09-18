@@ -5,6 +5,7 @@ A collection of random (useful) utility functions for Roblox that I tend to use 
 
 | Function | Description |
 | --- | --- |
+| .queueTask | Takes a `taskFunction` and adds it to a queue, given the `queueName`, making sure it runs if it's the most up-to-date version, given the `taskTime` |
 | .fireFor | Takes a `RemoteEvent` and a table of `Players`, firing the event for all those specified players with any extra optional arguments |
 | .getMinMaxPositionsForPart | Given a `BasePart` and an optional `offset`, returns two positions which are the minimum and maximum world position vectors within a part |
 | .clampPosition | Similar to `math.clamp()`, except for `Vector3` |
