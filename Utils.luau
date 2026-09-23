@@ -42,7 +42,7 @@ function Utils.queueTask(queueName : string, taskTime : number, taskFunction : (
 			task.wait()
 		end
 		
-		if queues[queueName].Time > taskTime or queues[queueName].Version > currentVersion then
+		if (queues[queueName].Time > taskTime) or (queues[queueName].Time == taskTime and queues[queueName].Version > currentVersion) then
 			return
 		end
 		
