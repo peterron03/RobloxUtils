@@ -22,7 +22,7 @@ const cachedBadgeInfo = {}
 const debounces = {}
 const queues = {}
 
-function Utils.queueTask(queueName : string, taskTime : number, taskFunction : () -> ())
+function Utils.queueTask(queueName : string, taskTime : number, taskFunction : () -> (), useVersionForSameTaskTime : boolean?)
 	task.spawn(function()
 		if not queues[queueName] then
 			queues[queueName] = {
@@ -34,7 +34,7 @@ function Utils.queueTask(queueName : string, taskTime : number, taskFunction : (
 		
 		local currentVersion = queues[queueName].Version + 1
 		
-		if queues[queueName].Version < currentVersion then
+		if queues[queueName].Version < currentVersion and useVersionForSameTaskTime then
 			queues[queueName].Version = currentVersion
 		end
 		
