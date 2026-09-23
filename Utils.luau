@@ -31,11 +31,11 @@ function Utils.queueTask(queueName : string, taskTime : number, taskFunction : (
 			}
 		end
 		
-		if queues[queueName].Time < taskTime then
-			if queues[queueName].Active then
-				repeat task.wait() until not queues[queueName].Active
-			end
-		else
+		while queues[queueName].Active do
+			task.wait()
+		end
+		
+		if queues[queueName].Time >= taskTime then
 			return
 		end
 		
@@ -44,9 +44,11 @@ function Utils.queueTask(queueName : string, taskTime : number, taskFunction : (
 			Time = taskTime
 		}
 		
-		taskFunction()
+		const success, err = pcall(taskFunction)
 		
 		queues[queueName].Active = false
+		
+		if not success then warn(err) end
 	end)
 end
 
