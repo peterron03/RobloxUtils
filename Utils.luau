@@ -27,24 +27,29 @@ function Utils.queueTask(queueName : string, taskTime : number, taskFunction : (
 		if not queues[queueName] then
 			queues[queueName] = {
 				Active = false,
-				Time = -1
+				Time = -1,
+				Version = 0
 			}
+		end
+		
+		local currentVersion = queues[queueName].Version + 1
+		
+		if queues[queueName].Version < currentVersion then
+			queues[queueName].Version = currentVersion
 		end
 		
 		while queues[queueName].Active do
 			task.wait()
 		end
 		
-		if queues[queueName].Time >= taskTime then
+		if queues[queueName].Time > taskTime or queues[queueName].Version > currentVersion then
 			return
 		end
 		
-		queues[queueName] = {
-			Active = true,
-			Time = taskTime
-		}
+		queues[queueName].Active = true
+		queues[queueName].Time = taskTime
 		
-		const success, err = pcall(taskFunction)
+		const success, err = pcall(taskFunction, queues[queueName])
 		
 		queues[queueName].Active = false
 		
