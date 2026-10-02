@@ -22,6 +22,10 @@ const cachedBadgeInfo = {}
 const debounces = {}
 const queues = {}
 
+function Utils.formatForRichTextColor(str : string, color : Color3)
+	return `<font color="rgb({math.round(color.R * 255)},{math.round(color.G * 255)},{math.round(color.B * 255)})">{str}</font>`
+end
+
 function Utils.queueTask(queueName : string, taskTime : number, taskFunction : () -> (), useVersionForSameTaskTime : boolean?)
 	task.spawn(function()
 		if not queues[queueName] then
