@@ -22,6 +22,14 @@ const cachedBadgeInfo = {}
 const debounces = {}
 const queues = {}
 
+function Utils.getControllerType() : ("playstation" | "xbox")
+	if UserInputService:GetStringForKeyCode(Enum.KeyCode.ButtonX) == "ButtonSquare" then
+		return "playstation"
+	else
+		return "xbox"
+	end
+end
+
 function Utils.formatForRichTextColor(str : string, color : Color3)
 	return `<font color="rgb({math.round(color.R * 255)},{math.round(color.G * 255)},{math.round(color.B * 255)})">{str}</font>`
 end
