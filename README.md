@@ -5,6 +5,7 @@ A collection of random utility functions for Roblox that I tend to use here and 
 
 | Function | Description |
 | --- | --- |
+| .getControllerType | Returns either `xbox` or `playstation`, depending on what controller is being used by the local player |
 | .formatForRichTextColor | Gives the proper format needed for the given `string`, given the desired `color` |
 | .queueTask | Takes a `taskFunction` and adds it to a queue, given the `queueName`, making sure it runs if it's the most up-to-date version, given the `taskTime`; optional `useVersionForSameTaskTime` parameter as well |
 | .fireFor | Takes a `RemoteEvent` and a table of `Players`, firing the event for all those specified players with any extra optional arguments |
