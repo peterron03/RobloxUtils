@@ -22,6 +22,9 @@ const cachedBadgeInfo = {}
 const debounces = {}
 const queues = {}
 
+-- VARIABLES --
+local cachedLastInput = nil
+
 function Utils.getControllerType() : ("playstation" | "xbox")
 	if UserInputService:GetStringForKeyCode(Enum.KeyCode.ButtonX) == "ButtonSquare" then
 		return "playstation"
@@ -555,19 +558,23 @@ end
 function Utils.getLastInput() : ("touch" | "mouse" | "controller")?
 	const lastType = UserInputService:GetLastInputType()
 	const uiType = Enum.UserInputType
+	
+	local lastInput = nil
 
 	if lastType == uiType.Touch then
-		return "touch"
+		lastInput = "touch"
 	elseif lastType == uiType.Keyboard or lastType == uiType.MouseMovement or lastType == uiType.MouseButton1    
 		or lastType == uiType.MouseWheel or lastType == uiType.MouseButton2 or lastType == uiType.MouseButton3 then
-		return "mouse"
+		lastInput = "mouse"
 	elseif lastType == uiType.Gamepad1 or lastType == uiType.Gamepad2 or lastType == uiType.Gamepad3
 		or lastType == uiType.Gamepad4 or lastType == uiType.Gamepad5 or lastType == uiType.Gamepad6
 		or lastType == uiType.Gamepad7 or lastType == uiType.Gamepad8 then
-		return "controller"
+		lastInput = "controller"
 	end
 	
-	return nil
+	cachedLastInput = lastInput
+
+	return lastInput or cachedLastInput
 end
 
 function Utils.getCountryCode(player : Player) : string?
